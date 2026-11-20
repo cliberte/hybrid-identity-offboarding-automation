@@ -18,9 +18,17 @@ try {
     $TargetOU   = $env:AD_TARGET_OU
     $SyncServer = $env:ENTRA_SYNC_SERVER
 
+    # Shared synchronization script
+    $SyncScript = Join-Path $PSScriptRoot `
+        '..\entra-sync\Invoke-EntraDeltaSync.ps1'
+
+    if (-not (Test-Path -LiteralPath $SyncScript -PathType Leaf)) {
+        throw 'Shared synchronization script not found.'
+    }
+
     # Validate environment configuration
     if (-not $UPNSuffix -or -not $TargetOU -or -not $SyncServer) {
-    throw 'Required environment configuration is missing.'
+        throw 'Required environment configuration is missing.'
     }
     # Validate required Jenkins parameters
     if (-not $FirstName -or -not $LastName -or
@@ -85,10 +93,11 @@ try {
     # Request Microsoft Entra Connect delta synchronization
     Write-Host 'Requesting Microsoft Entra Connect delta sync...'
 
-    Invoke-Command -ComputerName $SyncServer -ScriptBlock {
-        $ErrorActionPreference = 'Stop'
-        Import-Module ADSync
-        Start-ADSyncSyncCycle -PolicyType Delta
+    # Execute shared synchronization script
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $SyncScript
+
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Shared synchronization script failed.'
     }
 
     Write-Host 'Provisioning workflow completed.'

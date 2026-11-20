@@ -16,6 +16,14 @@ try {
     $GroupName  = $env:AD_OFFBOARD_GROUP
     $SyncServer = $env:ENTRA_SYNC_SERVER
 
+    # Shared synchronization script
+    $SyncScript = Join-Path $PSScriptRoot `
+        '..\entra-sync\Invoke-EntraDeltaSync.ps1'
+
+    if (-not (Test-Path -LiteralPath $SyncScript -PathType Leaf)) {
+        throw 'Shared synchronization script not found.'
+    }
+
     # Validate required parameter
     if ([string]::IsNullOrWhiteSpace($Username)) {
         throw 'AD_USERNAME parameter cannot be empty.'
@@ -120,19 +128,11 @@ try {
     # Trigger Entra Connect delta synchronization
     Write-Host 'Triggering Entra Connect delta sync...'
 
-    $SyncResult = Invoke-Command `
-        -ComputerName $SyncServer `
-        -Authentication Kerberos `
-        -ScriptBlock {
-            $ErrorActionPreference = 'Stop'
-            Import-Module ADSync
-            Start-ADSyncSyncCycle `
-                -PolicyType Delta `
-                -InteractiveMode $false
-        }
+    # Execute shared synchronization script
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $SyncScript
 
-    if ($SyncResult.Result -ne 'Success') {
-        throw 'Entra Connect delta sync request failed.'
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Shared synchronization script failed.'
     }
 
     Write-Host '-----------------------------------'
