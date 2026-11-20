@@ -31,6 +31,8 @@ Technical documentation is being progressively added to this repository.
 | JENKINS01 | Identity lifecycle automation |
 | Microsoft Entra ID | Cloud identity management |
 
+[View the detailed lab architecture and workflow diagram](docs/architecture.md)
+
 ## ⚙️ Implemented Features
 
 ### User Provisioning
