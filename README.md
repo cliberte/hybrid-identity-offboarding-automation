@@ -1,95 +1,87 @@
 # Hybrid Identity Lab — IAM Lifecycle Automation
 
-## 📌 Project Overview
+## Project overview
 
-A personal IAM engineering project demonstrating hybrid identity
-management, automated user provisioning and offboarding,
-least-privilege access, and synchronization between Active Directory
-and Microsoft Entra ID using PowerShell and Jenkins.
+A personal IAM engineering lab demonstrating automated identity provisioning and offboarding across on-premises Active Directory and Microsoft Entra ID using PowerShell, Jenkins and Microsoft Entra Connect.
 
-**Project Status:** Completed and operational.
-Technical documentation is being progressively added to this repository.
+**Project status:** Operational and tested.
 
-## 🛠️ Technologies Used
+## Architecture
 
-- Windows Server 2022
-- Active Directory Domain Services (AD DS)
-- Microsoft Entra ID
-- Microsoft Entra Connect Sync
-- Password Hash Synchronization (PHS)
-- PowerShell
-- Jenkins
-- VMware Workstation
-- Kerberos and WinRM
+```mermaid
+flowchart TD
+    A["JENKINS01 — Automation"] --> B["DC01 — Active Directory"]
+    A -->|"Kerberos / WinRM"| C["AADCONNECT01 — Entra Connect"]
+    B --> C
+    C --> D["Microsoft Entra ID"]
+```
 
-## 🏗️ Lab Architecture
+## Implemented capabilities
 
-| Server | Role |
+| Capability | Implementation |
 | --- | --- |
-| DC01 | Active Directory Domain Services and DNS |
-| AADCONNECT01 | Microsoft Entra Connect Sync |
-| JENKINS01 | Identity lifecycle automation |
-| Microsoft Entra ID | Cloud identity management |
+| User provisioning | Parameterized account creation |
+| Access assignment | AD security group membership |
+| User offboarding | Account disablement and managed group removal |
+| Hybrid synchronization | On-demand Entra Connect delta sync |
+| Secrets management | Jenkins Credentials |
+| Safety controls | OU boundaries and input validation |
+| Error handling | PowerShell exceptions and Jenkins exit codes |
+| Modular automation | Shared synchronization script |
 
-[View the detailed lab architecture and workflow diagram](docs/architecture.md)
+## Technologies
 
-## ⚙️ Implemented Features
+Windows Server 2022 · Active Directory · Microsoft Entra ID · Entra Connect · Password Hash Synchronization (PHS) · PowerShell · Jenkins · VMware Workstation · Kerberos · WinRM · GitHub
 
-### User Provisioning
+## Technical documentation
 
-- Parameterized Jenkins and PowerShell automation
-- Active Directory user account creation
-- Security group assignment
-- Organizational Unit (OU) placement
-- Identity synchronization to Microsoft Entra ID
+| Document | Description |
+| --- | --- |
+| [Architecture](docs/architecture.md) | Infrastructure and identity workflows |
+| [Jenkins configuration](docs/jenkins-configuration.md) | Job configuration and credential bindings |
+| [Testing and validation](docs/testing-and-validation.md) | Functional, negative and security testing |
+| [Operational runbook](docs/operational-runbook.md) | Operations, troubleshooting and maintenance |
+| [Maintenance record](docs/maintenance/2026-11-19-hybrid-identity-lab.md) | Infrastructure maintenance and troubleshooting |
 
-### User Offboarding
+## Testing results
 
-- Automated Active Directory account disablement
-- Security group membership removal
-- Movement to a dedicated Disabled Users OU
-- Post-action validation
-- Microsoft Entra Connect delta synchronization
-- Cloud account status verification
+| Metric | Result |
+| --- | --- |
+| Documented test scenarios | 11 |
+| Passed | 11 |
+| Documented pass rate | 100% |
 
-## 🔐 Security and Least-Privilege Design
+Results apply to the documented scenarios tested throughout the lab's development. See [testing and validation](docs/testing-and-validation.md) for details.
 
-- Dedicated Jenkins service account
-- Delegated Active Directory permissions
-- Organizational Unit-based permission boundaries
-- ADSyncOperators permissions
-- Kerberos-authenticated PowerShell remoting
-- Explicit error handling and validation
-- Jenkins build failure reporting
+## Skills demonstrated
 
-## ✅ Testing and Validation
+- Hybrid identity engineering
+- Identity lifecycle management
+- PowerShell and Jenkins automation
+- Role-based access assignment
+- Least-privilege administration
+- Defensive programming
+- Root cause analysis
+- Technical documentation and version control
 
-- Successful test user provisioning
-- Active Directory account disablement verified
-- Security group removal verified
-- Disabled Users OU placement verified
-- Entra Connect delta synchronization validated
-- Disabled account state verified in Microsoft Entra ID
-- Jenkins success and failure handling validated
+## Current limitations
 
-## 🎯 Skills Demonstrated
+- Offboarding removes only the configured security group.
+- Cloud account verification is performed manually.
+- Jenkins executes locally deployed scripts.
+- Disaster recovery testing remains planned.
 
-- Hybrid Identity Engineering
-- Identity Lifecycle Management
-- Identity and Access Management (IAM)
-- Active Directory Administration
-- Microsoft Entra ID Administration
-- PowerShell Automation
-- Jenkins Automation
-- Least-Privilege Access
-- Hybrid Identity Troubleshooting
+## Engineering roadmap
 
-## 📝 Maintenance log
+- Automated GitHub script retrieval through Jenkins.
+- Microsoft Graph integration.
+- Enhanced security group management.
+- Automated audit logging.
+- Disaster recovery validation.
+- Mover lifecycle automation.
 
-- [2026-11-19 — Hybrid identity lab maintenance and Windows 11 26H2 upgrade](docs/maintenance/2026-11-19-hybrid-identity-lab.md)
+## Author
 
-## 👤 Author
-
-Christian Liberté
+**Christian Liberté**
 
 Identity & Access Management Specialist | SC-300 | Security+
